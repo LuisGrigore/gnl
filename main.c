@@ -3,13 +3,16 @@
 
 int main(int argc, char const *argv[])
 {
-	static t_fd_list *fd_list = NULL;
-    t_fd_list *node = get_fd_node(&fd_list, 1);
+	int fd = open("puta.txt",O_RDONLY);
+	int i = 0;
+	char *line;
 
-	free_fd_node(&fd_list, 1);
-
-	printf("%d\n", get_fd_node(&fd_list, 1)->fd);
-
-
+	while (i < 6)
+	{
+		line = get_next_line(fd);
+		printf("%s",line);
+		i++;
+		free(line);
+	}
 	return 0;
 }

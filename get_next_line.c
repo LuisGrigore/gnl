@@ -2,25 +2,16 @@
 
 char *get_next_line(int fd)
 {
-	static t_fd_list *fd_list = NULL;
-    t_fd_list *node = get_fd_node(&fd_list, fd);
-    char buffer[BUFFER_SIZE + 1];
-    ssize_t bytes_read;
+	static t_list	*list = NULL;
+    char	*next_line;
 
-    if (!node || fd < 0 || BUFFER_SIZE <= 0)
-        return NULL;
+    if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
+		return (NULL);
 
-    while (!strchr(node->buffer, '\n'))
-    {
-        bytes_read = read(fd, buffer, BUFFER_SIZE);
-        if (bytes_read <= 0)
-            break;
-        buffer[bytes_read] = '\0';
-        node->buffer = str_join_free(node->buffer, buffer);
-    }
-    
-    char *line = extract_line(&node->buffer);
-    if (!line)
-        free_fd_node(&fd_list, fd);
-    return line;
+	create_list(&list, fd);
+	if(list == NULL)
+		return (NULL);
+	next_line = my_get_line(list);
+	prepare_for_next_line(&list);
+	return (next_line);
 }
