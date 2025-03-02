@@ -3,7 +3,7 @@
 
 int main(int argc, char const *argv[])
 {
-	int fd = open("puta.txt",O_RDONLY);
+	int fd = open("test.txt",O_RDONLY);
 	int i = 0;
 	char *line;
 

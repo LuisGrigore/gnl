@@ -1,181 +1,47 @@
 #include "get_next_line.h"
+#include "config.h"
 #include <stdio.h>
 
-void create_list(t_list **list, int fd)
+t_list *create_list()
 {
-	int char_read;
-	char *buff;
-	while(found_new_line(*list) == 0)
-	{
-		buff = malloc(BUFFER_SIZE + 1);
-		if(!buff)
-			return ;
-		char_read = read(fd, buff, BUFFER_SIZE);
-		if(!char_read)
-		{
-			free(buff);
-			return ;
-		}
-		buff[char_read] = '\0';
-		append(list, buff);
-	}
+	t_list *list = malloc(sizeof(t_list));
+	list->buff = NULL;
+	list->next = NULL;
+	return (list);
 }
 
-int found_new_line(t_list *list)
-{
-	int i;
-
-	if (list == NULL)
-		return (0);
-	i = 0;
-	while(list)
-	{
-		i = 0;
-		while (list -> buff[i] && i < BUFFER_SIZE)
-		{
-			if(list->buff[i] == '\n')
-				return (1);
-			i++;
-		}
-		list = list->next;
-	}
-	return (0);
-}
-
-void append(t_list **list, char *buff)
+t_list *append(t_list *list, char *buff)
 {
 	t_list *new_node;
-	t_list *last_node;
-
-	last_node = find_last_node(*list);
-	new_node = malloc(sizeof(t_list));
-	if (new_node == NULL)
-		return ;
-	if (last_node == NULL)
-		*list = new_node;
-	else
-		last_node->next = new_node;
-	new_node->buff = buff;
-	new_node->next = NULL;
-}
-
-char *my_get_line(t_list *list)
-{
-	int str_len;
-	char *next_str;
-
-	if (list == NULL)
-		return (NULL);
-	str_len = len_new_line(list);
-	next_str = malloc(str_len + 1);
-	if (next_str == NULL)
-		return (NULL);
-	copy_str(list, next_str);
-	return (next_str);
 	
+	if(!list || !buff)
+		return (list);
+	new_node = create_list();
+	new_node->buff = buff;
+	new_node->next = list;
+	return (new_node);
 }
 
-void copy_str(t_list *list, char *str)
+static void destroy_node(t_list *list)
 {
-	int i;
-	int k;
-
-	if( list == NULL)
-		return ;
-	k = 0;
-	while (list)
-	{
-		i = 0;
-		while (list->buff[i])
-		{
-			if (list->buff[i] == '\n')
-			{
-				str[k++] = '\n';
-				str[k] = '\0';
-				return ;
-			}
-			str[k++] = list->buff[i++];
-		}
-		list = list->next;
-	}
-	str[k] = '\0';
+	if(!list)
+		return;
+	if(list->buff)
+		free(list->buff);
+	free(list);
 }
 
-int len_new_line(t_list *list)
+static void destroy_list(t_list *list)
 {
-	int i;
-	int len;
-
-	if (list == NULL)
-		return (0);
-	len = 0;
-	while (list)
-	{
-		i = 0;
-		while (list->buff[i])
-		{
-			if (list->buff[i] == '\n')
-			{
-				++len;
-				return (len);
-			}
-			++i;
-			++len;
-		}
-		list = list->next;
-	}
-	return (len);
+	if(!list)
+		return;
+	destroy_node(list);
+	if(list->next)
+		destroy_list(list->next);
 }
 
-void	prepare_for_next_line(t_list **list)
-{
-	t_list *last_node;
-	t_list *clean_node;
-	int i;
-	int k;
-	char *buff;
-
-	buff = malloc(BUFFER_SIZE + 1);
-	clean_node = malloc(sizeof(t_list));
-	if (buff == NULL || clean_node == NULL)
-		return ;
-	last_node = find_last_node(*list);
-	i = 0;
-	k = 0;
-	while (last_node->buff[i] && last_node->buff[i] != '\n')
-		++i;
-	while (last_node->buff[i] && last_node->buff[++i])
-		buff[k++] = last_node->buff[i];
-	buff[k] = '\0';
-	clean_node->buff = buff;
-	clean_node->next = NULL;
-	dealloc(list, clean_node, buff);
-}
-
-void dealloc(t_list **list, t_list *clean_node, char *buff)
-{
-	t_list *tmp;
-
-	if(*list == NULL)
-		return ;
-	while(*list)
-	{
-		tmp = (*list)->next;
-		free((*list)->buff);
-		free(*list);
-		*list = tmp;
-	}
-	*list = NULL;
-	if(clean_node->buff[0])
-		*list = clean_node;
-	else 
-	{
-		free(buff);
-		free(clean_node);
-	}
-}
-
-t_list *find_last_node(t_list *list)
+/*
+static t_list *find_last_node(t_list *list)
 {
 	if(!list)
 		return (NULL);
@@ -185,3 +51,36 @@ t_list *find_last_node(t_list *list)
 	}
 	return (list);
 }
+*/
+
+char *get_next_buff(int fd)
+{
+	char *buff;
+	int read_out;
+
+	buff = malloc(BUFFER_SIZE);
+	read_out = read(fd, buff, BUFFER_SIZE);
+	if(read_out <= 0)
+	{
+		free(buff);
+		return (NULL);
+	}
+	if(read_out < BUFFER_SIZE)
+		buff[read_out] = '\0';
+	return (buff);
+}
+
+int new_line_exists(char *str)
+{
+	int i;
+
+	i = 0;
+	while(i < BUFFER_SIZE && str[i])
+	{
+		if (str[i] == '\n')
+			return(i);
+		i++;
+	}
+	return (-1);
+}
+
