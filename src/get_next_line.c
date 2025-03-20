@@ -11,7 +11,8 @@ char *get_next_line(int fd)
 		return (NULL);
 	list = create_list();
 	temp = get_next_buff(fd);
-	nl = new_line_exists(temp);
+	list = append(list, temp);
+	//while(!is_end_node())
 	if(temp[BUFFER_SIZE-1] == '\n' || temp[BUFFER_SIZE-1] == '\0')
 	return (next_line);
 }

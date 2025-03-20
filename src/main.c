@@ -1,6 +1,7 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
+/*
 int main(int argc, char const *argv[])
 {
 	int fd = open("test.txt",O_RDONLY);
@@ -15,4 +16,4 @@ int main(int argc, char const *argv[])
 		free(line);
 	}
 	return 0;
-}
+}*/

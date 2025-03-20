@@ -1,5 +1,4 @@
 #include "get_next_line.h"
-#include "config.h"
 #include <stdio.h>
 
 t_list *create_list()
@@ -7,6 +6,7 @@ t_list *create_list()
 	t_list *list = malloc(sizeof(t_list));
 	list->buff = NULL;
 	list->next = NULL;
+	list->prev = NULL;
 	return (list);
 }
 
@@ -19,39 +19,61 @@ t_list *append(t_list *list, char *buff)
 	new_node = create_list();
 	new_node->buff = buff;
 	new_node->next = list;
+	list->prev = new_node;
 	return (new_node);
 }
 
-static void destroy_node(t_list *list)
+char *list_to_str(t_list *list)
+{
+	t_list *current;
+	int i;
+	int j;
+	char *resul;
+
+	current = list;
+	j = -1;
+	while(1)
+	{
+		j++;
+		if(!current->next)
+			break;
+		current = current->next;
+	}
+	resul = malloc(i + (BUFFER_SIZE * j));
+	i = 0;
+	j = 0;
+	while(current)
+	{
+		while(i < BUFFER_SIZE)
+		{
+			resul[j] = current->buff[i];
+			i++;
+			j++;
+			if(current->buff[i] == '\n' || current->buff[i] == '\0')
+				break;
+		}
+		i = 0;
+		current = current->prev;
+	}
+	return (resul);
+}
+
+void clean_list(t_list *list)
+{
+	destroy_list(list->next);
+}
+
+void destroy_list(t_list *list)
 {
 	if(!list)
 		return;
+	if(list->next)
+		destroy_list(list->next);
 	if(list->buff)
 		free(list->buff);
 	free(list);
 }
 
-static void destroy_list(t_list *list)
-{
-	if(!list)
-		return;
-	destroy_node(list);
-	if(list->next)
-		destroy_list(list->next);
-}
-
-/*
-static t_list *find_last_node(t_list *list)
-{
-	if(!list)
-		return (NULL);
-	while (list->next)
-	{
-		list = list->next;
-	}
-	return (list);
-}
-*/
 
 char *get_next_buff(int fd)
 {
@@ -70,14 +92,14 @@ char *get_next_buff(int fd)
 	return (buff);
 }
 
-int new_line_exists(char *str)
+int is_end_node(char *str)
 {
 	int i;
 
 	i = 0;
 	while(i < BUFFER_SIZE && str[i])
 	{
-		if (str[i] == '\n')
+		if (str[i] == '\n' || !str[i])
 			return(i);
 		i++;
 	}

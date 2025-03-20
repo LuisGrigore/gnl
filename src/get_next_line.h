@@ -14,6 +14,7 @@ typedef struct t_list
 {
     char *buff;
     struct t_list *next;
+	struct t_list *prev;
 } t_list;
 
 t_list *create_list();
@@ -22,6 +23,6 @@ char *get_next_buff(int fd);
 static void dealloc(t_list **list, t_list *clean_node, char *buff);
 static t_list *find_last_node(t_list *list);
 char *get_next_line(int fd);
-int new_line_exists(char *str);
+int is_end_node(char *str);
 
 #endif
