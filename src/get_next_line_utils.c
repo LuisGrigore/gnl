@@ -6,7 +6,7 @@
 /*   By: lgrigore <lgrigore@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 15:01:15 by lgrigore          #+#    #+#             */
-/*   Updated: 2025/03/27 15:02:37 by lgrigore         ###   ########.fr       */
+/*   Updated: 2025/03/27 16:01:21 by lgrigore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*ft_strchr(const char *str, int n)
 			return (NULL);
 		tmp++;
 	}
-	return ((char *)tmp);
+	return (tmp);
 }
 
 size_t	ft_strlen(const char *str)
@@ -62,7 +62,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		return (NULL);
 	srclen = ft_strlen(s);
 	if (start > srclen)
-		return (ft_strdup(""));
+		return (NULL);
 	if (start + len > srclen)
 		len = srclen - start;
 	str = (char *)malloc(sizeof(char) * len + 1);
