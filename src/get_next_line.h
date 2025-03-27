@@ -1,28 +1,33 @@
-#ifndef GET_NEXT_LINE
-# define GET_NEXT_LINE
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgrigore <lgrigore@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/27 15:01:21 by lgrigore          #+#    #+#             */
+/*   Updated: 2025/03/27 15:01:22 by lgrigore         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <string.h>
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
-#ifndef BUFFER_SIZE
-# define BUFFER_SIZE 42
-#endif
+# include <unistd.h>
+# include <stdlib.h>
 
-typedef struct t_list
-{
-    char *buff;
-    struct t_list *next;
-	struct t_list *prev;
-} t_list;
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1
+# endif
 
-t_list *create_list();
-t_list *append(t_list *list, char *buff);
-char *get_next_buff(int fd);
-static void dealloc(t_list **list, t_list *clean_node, char *buff);
-static t_list *find_last_node(t_list *list);
-char *get_next_line(int fd);
-int is_end_node(char *str);
+# ifndef MAX_FD
+#  define MAX_FD 256
+# endif
 
+char	*get_next_line(int fd);
+char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strchr(const char *str, int n);
+size_t	ft_strlen(const char *str);
+char	*ft_strdup(const char *str);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
 #endif

@@ -1,108 +1,102 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgrigore <lgrigore@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/27 15:01:15 by lgrigore          #+#    #+#             */
+/*   Updated: 2025/03/27 15:02:37 by lgrigore         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
-#include <stdio.h>
 
-t_list *create_list()
+char	*ft_strchr(const char *str, int n)
 {
-	t_list *list = malloc(sizeof(t_list));
-	list->buff = NULL;
-	list->next = NULL;
-	list->prev = NULL;
-	return (list);
-}
+	char	*tmp;
 
-t_list *append(t_list *list, char *buff)
-{
-	t_list *new_node;
-	
-	if(!list || !buff)
-		return (list);
-	new_node = create_list();
-	new_node->buff = buff;
-	new_node->next = list;
-	list->prev = new_node;
-	return (new_node);
-}
-
-char *list_to_str(t_list *list)
-{
-	t_list *current;
-	int i;
-	int j;
-	char *resul;
-
-	current = list;
-	j = -1;
-	while(1)
+	tmp = (char *) str;
+	while (*tmp != (char)n)
 	{
-		j++;
-		if(!current->next)
-			break;
-		current = current->next;
+		if (*tmp == 0)
+			return (NULL);
+		tmp++;
 	}
-	resul = malloc(i + (BUFFER_SIZE * j));
-	i = 0;
-	j = 0;
-	while(current)
-	{
-		while(i < BUFFER_SIZE)
-		{
-			resul[j] = current->buff[i];
-			i++;
-			j++;
-			if(current->buff[i] == '\n' || current->buff[i] == '\0')
-				break;
-		}
-		i = 0;
-		current = current->prev;
-	}
-	return (resul);
+	return ((char *)tmp);
 }
 
-void clean_list(t_list *list)
+size_t	ft_strlen(const char *str)
 {
-	destroy_list(list->next);
+	size_t	a;
+
+	a = 0;
+	while (str[a])
+		a++;
+	return (a);
 }
 
-void destroy_list(t_list *list)
+char	*ft_strdup(const char *str)
 {
-	if(!list)
-		return;
-	if(list->next)
-		destroy_list(list->next);
-	if(list->buff)
-		free(list->buff);
-	free(list);
-}
+	size_t	i;
+	size_t	len;
+	char	*s;
 
-
-char *get_next_buff(int fd)
-{
-	char *buff;
-	int read_out;
-
-	buff = malloc(BUFFER_SIZE);
-	read_out = read(fd, buff, BUFFER_SIZE);
-	if(read_out <= 0)
-	{
-		free(buff);
+	len = ft_strlen(str) + 1;
+	s = (char *)malloc(sizeof(char) * len);
+	if (s == NULL)
 		return (NULL);
-	}
-	if(read_out < BUFFER_SIZE)
-		buff[read_out] = '\0';
-	return (buff);
+	i = -1;
+	while (++i < len)
+		s[i] = str[i];
+	return (s);
 }
 
-int is_end_node(char *str)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	int i;
+	size_t	i;
+	size_t	srclen;
+	char	*str;
 
+	if (!s)
+		return (NULL);
+	srclen = ft_strlen(s);
+	if (start > srclen)
+		return (ft_strdup(""));
+	if (start + len > srclen)
+		len = srclen - start;
+	str = (char *)malloc(sizeof(char) * len + 1);
+	if (!str)
+		return (NULL);
 	i = 0;
-	while(i < BUFFER_SIZE && str[i])
+	while (s[start + i] && i < len)
 	{
-		if (str[i] == '\n' || !str[i])
-			return(i);
+		str[i] = s[start + i];
 		i++;
 	}
-	return (-1);
+	str[i] = '\0';
+	return (str);
 }
 
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	char	*str;
+	int		i;
+	int		j;
+	size_t	size;
+
+	if (!s1 || !s2)
+		return (NULL);
+	size = ft_strlen(s1) + ft_strlen(s2) + 1;
+	str = (char *)malloc(sizeof(char) * size);
+	if (!str)
+		return (NULL);
+	i = -1;
+	while (s1[++i])
+		str[i] = s1[i];
+	j = -1;
+	while (s2[++j])
+		str[i + j] = s2[j];
+	str[i + j] = '\0';
+	return (str);
+}
